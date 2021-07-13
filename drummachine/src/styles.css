@@ -1,0 +1,94 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Otomanopee+One:wght@400&display=swap");
+* {
+  border: none;
+  padding: 0;
+  margin: 0;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+body {
+  background-image: -webkit-gradient(linear, left top, right top, from(#add7ff), to(#2997ff));
+  background-image: linear-gradient(to right, #add7ff, #2997ff);
+  height: 100vh;
+}
+
+#pad-board {
+  border-radius: 10px;
+  padding: 40px;
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+  background: #fff784;
+  -webkit-box-shadow: 20px 13px 25px rgba(95, 63, 63, 0.3);
+          box-shadow: 20px 13px 25px rgba(95, 63, 63, 0.3);
+}
+
+#pad-board .txt-container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  padding: 50px;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: space-evenly;
+      -ms-flex-pack: space-evenly;
+          justify-content: space-evenly;
+  margin-left: 20px;
+}
+
+#pad-board .txt-container #display {
+  font-family: 'Poppins', sans-serif;
+  font-size: 15px;
+  background: #cacaca;
+  padding: 10px;
+  border: 3px solid black;
+  min-height: 50px;
+}
+
+#pad-board .txt-container h1 {
+  margin-top: -80px;
+  font-family: 'Otomanopee One', sans-serif;
+}
+
+#pad-board .drum-pads {
+  height: 100px;
+  width: 100px;
+  cursor: pointer;
+  border-radius: 10px;
+  display: -ms-grid;
+  display: grid;
+  place-items: center;
+  font-size: 30px;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  background: #a2e2ff;
+  -webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3);
+          box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+#pad-board #bank-pads-grid {
+  display: -ms-grid;
+  display: grid;
+  grid-gap: 30px;
+  -ms-grid-rows: 100px 100px 100px;
+      grid-template-rows: 100px 100px 100px;
+  -ms-grid-columns: 100px 100px 100px;
+      grid-template-columns: 100px 100px 100px;
+}
+/*# sourceMappingURL=styles.css.map */
