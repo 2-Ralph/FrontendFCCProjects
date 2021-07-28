@@ -1,0 +1,82 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
+@font-face {
+    font-family: 'Digital';
+    src: url('//db.onlinewebfonts.com/t/8e22783d707ad140bffe18b2a3812529.eot');
+    src: url('//db.onlinewebfonts.com/t/8e22783d707ad140bffe18b2a3812529.eot?#iefix')
+        format('embedded-opentype'),
+      url('//db.onlinewebfonts.com/t/8e22783d707ad140bffe18b2a3812529.woff2')
+        format('woff2'),
+      url('//db.onlinewebfonts.com/t/8e22783d707ad140bffe18b2a3812529.woff')
+        format('woff'),
+      url('//db.onlinewebfonts.com/t/8e22783d707ad140bffe18b2a3812529.ttf')
+        format('truetype'),
+      url('//db.onlinewebfonts.com/t/8e22783d707ad140bffe18b2a3812529.svg#Digital-7')
+        format('svg');
+  }
+
+$fonts: 'Poppins', sans-serif;
+
+*{
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+button{
+    background: white;
+}
+
+
+body{
+    font-family: $fonts;
+    height: 100vh;
+    width: 100%;
+    background: linear-gradient(to right, #a4dbff, #31adff)
+}
+
+#calc-container{
+    width: 400px;
+    height: 577px;
+    position: fixed;
+    inset: 0;
+    margin: auto;
+    box-shadow: 0 0 0px 20px rgba(255, 255, 255, .4);
+
+    #calc-btn-container{
+        display: grid;
+        grid-template-columns: repeat(4, 25%);
+    }
+
+    .calc-btn{
+        border: .2px solid rgba(0, 0, 0, .8);
+        font-size: 25px;
+        height: calc(400px/4);
+        margin-right: 0;
+        display: grid;
+        place-items: center;
+        background: rgba(88, 255, 88, 0.6);
+        cursor: pointer;
+
+        &:active{
+            background: blue;
+        }
+    }
+
+    #ac-btn, #equals-btn{
+        grid-column: span 2;
+    }
+
+    #calc-display{
+        padding: 10px;
+        font-size: 60px;
+        border: 0.3px solid black;
+        border-radius: 4px 4px 0 0;
+        text-align: right;
+        font-family: 'Digital', sans-serif;
+        min-height: 77px;
+        display: flex;
+        align-items: center;
+        justify-content: right;
+        background: rgba(255, 255, 255, .2)
+    }
+}
