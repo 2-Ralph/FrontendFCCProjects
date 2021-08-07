@@ -15,7 +15,7 @@ let TimeDisplay = (props) => {
           handleIncrementAndDecrement={props.handleIncrementAndDecrement}
         />
       <div id="timer-field">
-        <h1>25 : 00</h1>
+      <h1>{props.formattedTimer}</h1>
       </div>
       <div id="timer-controls">
         <div id="stop-start-icon-container" title="Pause">
@@ -23,10 +23,10 @@ let TimeDisplay = (props) => {
           className={props.iconToggleState}
           id="stop-start-icon"
           aria-hidden="true"
-          onClick={props.handleIconClick}></i>
+          onClick={props.handleCountDown} />
         </div>
         <div id="restart-container">
-          <i className="fa fa-refresh" />
+          <i className="fa fa-refresh" onClick={props.handleRestartClick}  />
         </div>
       </div>
     </div>
@@ -37,17 +37,17 @@ const IncrementAndDecrement = (props) => {
   return(
     <div id="increment-and-decrement-wrapper">
       <p>Session Length</p>
-      <div class="inc-dec-wrappers">
+      <div className="inc-dec-wrappers">
         <button
           className="change-val-btn"
           onClick={props.handleIncrementAndDecrement}
           value="sesh-inc">
             <span>
-              <i class="fa fa-plus" aria-hidden="true"></i>
+              <i className="fa fa-plus" aria-hidden="true"></i>
             </span>
             
         </button>
-          <div class="val-wrapper">
+          <div className="val-wrapper">
             <h5 i="session-time-val">{props.sessionVal}</h5>
           </div>
 
@@ -55,28 +55,28 @@ const IncrementAndDecrement = (props) => {
           className="change-val-btn"
           onClick={props.handleIncrementAndDecrement}
           value="sesh-dec">
-            <span><i class="fa fa-minus" aria-hidden="true"></i></span>
+            <span><i className="fa fa-minus" aria-hidden="true"></i></span>
 
         </button>
       </div>
       <p>Break Length</p>
-      <div class="inc-dec-wrappers">
+      <div className="inc-dec-wrappers">
         <button
-          class="change-val-btn"
+          className="change-val-btn"
           onClick={props.handleIncrementAndDecrement}
           value="break-inc">
-            <span><i class="fa fa-plus" aria-hidden="true"></i></span>
+            <span><i className="fa fa-plus" aria-hidden="true"></i></span>
             
         </button>
-        <div class="val-wrapper">
+        <div className="val-wrapper">
           <h5 id="break-time-val">{props.breakVal}</h5>
         </div>
 
         <button
-          class="change-val-btn"
+          className="change-val-btn"
           onClick={props.handleIncrementAndDecrement}
           value="break-dec">
-            <span><i class="fa fa-minus" aria-hidden="true"></i></span>
+            <span><i className="fa fa-minus" aria-hidden="true"></i></span>
             
         </button>
       </div>
@@ -90,31 +90,81 @@ class App extends React.Component{
     this.state = {
       breakVal: 5,
       sessionVal: 25,
-      iconToggleState: 'fa fa-pause'
+      iconToggleState: 'fa fa-pause',
+      currentTimerState: 'session',
+      formattedTimer: '25 : 00',
+      timerActive: false
     }
     this.handleIncrementAndDecrement = this.handleIncrementAndDecrement.bind(this);
-    this.handleIconClick = this.handleIconClick.bind(this);
+    this.handleIconChange = this.handleIconChange.bind(this);
     this.handleCountDown = this.handleCountDown.bind(this);
+    this.handleRestartClick = this.handleRestartClick.bind(this);
+    this.handlePause = this.handlePause.bind(this);
   };
 
-  handleIconClick(){
+  handleIconChange(){
     if(this.state.iconToggleState == 'fa fa-pause'){
       this.setState({
         iconToggleState: "fa fa-play"
       })
-      return;
-    }
+    } else{
+        this.setState({
+          iconToggleState: 'fa fa-pause'
+        })
+    };
+  };
+
+  handleRestartClick(){
     this.setState({
-      iconToggleState: 'fa fa-pause'
+      breakVal: 5,
+      sessionVal: 25,
+      iconToggleState: 'fa fa-pause',
+      currentTimerState: 'session',
+      formattedTimer: '25 : 00'
     })
   }
 
-  handleCountDown(){
-    const time = new Date();
-    const year = time.getFullYear();
-    const date = time.getDate();
+  handleCountDown(ms=this.state.sessionVal*1000*60){
+    let that = this;
+    let startTime, timer, objMethods = {};
 
+    objMethods.resume = function(){
+      startTime = new Date().getTime();
+      timer = setInterval(objMethods.step, 200);
+    };
+    objMethods.pause = function() {
+      ms = objMethods.step();
+      clearInterval(timer);
+    };
+    objMethods.step = function() {
+      let now = Math.max(0, ms - (new Date().getTime() - startTime))
+      let m = Math.floor(now / 60000);
+      let s = Math.floor(now / 1000) % 60;
+      s = (s < 10 ? "0" : "") + s;
+      that.setState({
+        formattedTimer: `${m} : ${s}`
+      });
+      return now;
+    };
+    objMethods.resume();
+    return objMethods;
+  };
+
+  handlePause(){
+    let timer = this.handleCountDown();
+    if(this.state.timerActive){
+      timer.pause();
+      console.log('pause entered');
+    }else{
+      timer.resume();
+      console.log('resume entered');
+    }
+    this.setState({
+      timerActive: !this.state.timerActive
+    });
   }
+
+
 
   handleIncrementAndDecrement(e){
     if(this.state.breakVal === 0 && /dec/i.test(e.target.value) || this.state.sessionVal === 0 && /dec/i.test(e.target.value)){
@@ -151,14 +201,16 @@ class App extends React.Component{
     return (
       <div id="wrapper">
         <TimeDisplay
-        handleIconClick={this.handleIconClick}
+        handleIconChange={this.handleIconChange}
         iconToggleState={this.state.iconToggleState}
         breakVal={this.state.breakVal}
         sessionVal={this.state.sessionVal}
         handleIncrementAndDecrement={this.handleIncrementAndDecrement}
+        handleRestartClick={this.handleRestartClick}
+        formattedTimer={this.state.formattedTimer}
+        handleCountDown={this.handlePause}
         />
       </div>
-      
     )
   }
 }
