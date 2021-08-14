@@ -1,32 +1,53 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-// import '../node_modules/font-awesome/css/font-awesome.min.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faPlay,
+  faPause,
+  faRecycle,
+  faPlus,
+  faMinus
+} from '@fortawesome/free-solid-svg-icons';
 import '../src/styles.css';
 
 
 /* eslint-disable */
 
 let TimeDisplay = (props) => {
-  return(
+  return (
     <div id="timer-container">
-        <IncrementAndDecrement
-          breakVal={props.breakVal}
-          sessionVal={props.sessionVal}
-          handleIncrementAndDecrement={props.handleIncrementAndDecrement}
-        />
+      <IncrementAndDecrement
+        breakVal={props.breakVal}
+        sessionVal={props.sessionVal}
+        handleIncrementAndDecrement={props.handleIncrementAndDecrement}
+      />
       <div id="timer-field">
-      <h1>{props.formattedTimer}</h1>
+        <h1>{props.formattedTimer}</h1>
       </div>
       <div id="timer-controls">
         <div id="stop-start-icon-container" title="Pause">
-          <i
-          className={props.iconToggleState}
-          id="stop-start-icon"
-          aria-hidden="true"
-          onClick={props.handleCountDown} />
+          {props.iconToggleState === 'fa fa-pause' &&
+            <i
+              id="stop-start-icon"
+              aria-hidden="true"
+              onClick={props.handleCountDown}>
+              <FontAwesomeIcon icon={faPause} />
+            </i>
+          }
+          {props.iconToggleState === 'fa fa-play' &&
+            <i
+              id="stop-start-icon"
+              aria-hidden="true"
+              onClick={props.handleCountDown}>
+              <FontAwesomeIcon icon={faPlay} />
+            </i>
+          }
         </div>
         <div id="restart-container">
-          <i className="fa fa-refresh" onClick={props.handleRestartClick}  />
+          <i
+            onClick={props.handleRestartClick}>
+            <FontAwesomeIcon icon={faRecycle} />
+          </i>
         </div>
       </div>
     </div>
@@ -34,7 +55,7 @@ let TimeDisplay = (props) => {
 }
 
 const IncrementAndDecrement = (props) => {
-  return(
+  return (
     <div id="increment-and-decrement-wrapper">
       <p>Session Length</p>
       <div className="inc-dec-wrappers">
@@ -42,20 +63,22 @@ const IncrementAndDecrement = (props) => {
           className="change-val-btn"
           onClick={props.handleIncrementAndDecrement}
           value="sesh-inc">
-            <span>
-              <i className="fa fa-plus" aria-hidden="true"></i>
-            </span>
-            
+          <span>
+            <FontAwesomeIcon icon={faPlus} />
+          </span>
+
         </button>
-          <div className="val-wrapper">
-            <h5 i="session-time-val">{props.sessionVal}</h5>
-          </div>
+        <div className="val-wrapper">
+          <h5 i="session-time-val">{props.sessionVal}</h5>
+        </div>
 
         <button
           className="change-val-btn"
           onClick={props.handleIncrementAndDecrement}
           value="sesh-dec">
-            <span><i className="fa fa-minus" aria-hidden="true"></i></span>
+          <span>
+            <FontAwesomeIcon icon={faMinus} />
+          </span>
 
         </button>
       </div>
@@ -65,8 +88,10 @@ const IncrementAndDecrement = (props) => {
           className="change-val-btn"
           onClick={props.handleIncrementAndDecrement}
           value="break-inc">
-            <span><i className="fa fa-plus" aria-hidden="true"></i></span>
-            
+          <span>
+            <FontAwesomeIcon icon={faPlus} />
+          </span>
+
         </button>
         <div className="val-wrapper">
           <h5 id="break-time-val">{props.breakVal}</h5>
@@ -76,16 +101,18 @@ const IncrementAndDecrement = (props) => {
           className="change-val-btn"
           onClick={props.handleIncrementAndDecrement}
           value="break-dec">
-            <span><i className="fa fa-minus" aria-hidden="true"></i></span>
-            
+          <span>
+            <FontAwesomeIcon icon={faMinus} />
+          </span>
+
         </button>
       </div>
     </div>
-    )
-    }
+  )
+}
 
-class App extends React.Component{
-  constructor(props){
+class App extends React.Component {
+  constructor(props) {
     super(props);
     this.state = {
       breakVal: 5,
@@ -102,19 +129,19 @@ class App extends React.Component{
     this.handlePause = this.handlePause.bind(this);
   };
 
-  handleIconChange(){
-    if(this.state.iconToggleState == 'fa fa-pause'){
+  handleIconChange() {
+    if (this.state.iconToggleState == 'fa fa-pause') {
       this.setState({
         iconToggleState: "fa fa-play"
       })
-    } else{
-        this.setState({
-          iconToggleState: 'fa fa-pause'
-        })
+    } else {
+      this.setState({
+        iconToggleState: 'fa fa-pause'
+      })
     };
   };
 
-  handleRestartClick(){
+  handleRestartClick() {
     this.setState({
       breakVal: 5,
       sessionVal: 25,
@@ -124,19 +151,19 @@ class App extends React.Component{
     })
   }
 
-  handleCountDown(ms=this.state.sessionVal*1000*60){
+  handleCountDown(ms = this.state.sessionVal * 1000 * 60) {
     let that = this;
     let startTime, timer, objMethods = {};
 
-    objMethods.resume = function(){
+    objMethods.resume = function () {
       startTime = new Date().getTime();
       timer = setInterval(objMethods.step, 200);
     };
-    objMethods.pause = function() {
+    objMethods.pause = function () {
       ms = objMethods.step();
       clearInterval(timer);
     };
-    objMethods.step = function() {
+    objMethods.step = function () {
       let now = Math.max(0, ms - (new Date().getTime() - startTime))
       let m = Math.floor(now / 60000);
       let s = Math.floor(now / 1000) % 60;
@@ -150,12 +177,12 @@ class App extends React.Component{
     return objMethods;
   };
 
-  handlePause(){
+  handlePause() {
     let timer = this.handleCountDown();
-    if(this.state.timerActive){
+    if (this.state.timerActive) {
       timer.pause();
       console.log('pause entered');
-    }else{
+    } else {
       timer.resume();
       console.log('resume entered');
     }
@@ -166,12 +193,12 @@ class App extends React.Component{
 
 
 
-  handleIncrementAndDecrement(e){
-    if(this.state.breakVal === 0 && /dec/i.test(e.target.value) || this.state.sessionVal === 0 && /dec/i.test(e.target.value)){
+  handleIncrementAndDecrement(e) {
+    if (this.state.breakVal === 0 && /dec/i.test(e.target.value) || this.state.sessionVal === 0 && /dec/i.test(e.target.value)) {
       return;
     }
 
-    switch(e.target.value){
+    switch (e.target.value) {
       case 'sesh-inc':
         this.setState({
           sessionVal: this.state.sessionVal += 1
@@ -197,18 +224,18 @@ class App extends React.Component{
     }
   }
 
-  render(){
+  render() {
     return (
       <div id="wrapper">
         <TimeDisplay
-        handleIconChange={this.handleIconChange}
-        iconToggleState={this.state.iconToggleState}
-        breakVal={this.state.breakVal}
-        sessionVal={this.state.sessionVal}
-        handleIncrementAndDecrement={this.handleIncrementAndDecrement}
-        handleRestartClick={this.handleRestartClick}
-        formattedTimer={this.state.formattedTimer}
-        handleCountDown={this.handlePause}
+          handleIconChange={this.handleIconChange}
+          iconToggleState={this.state.iconToggleState}
+          breakVal={this.state.breakVal}
+          sessionVal={this.state.sessionVal}
+          handleIncrementAndDecrement={this.handleIncrementAndDecrement}
+          handleRestartClick={this.handleRestartClick}
+          formattedTimer={this.state.formattedTimer}
+          handleCountDown={this.handlePause}
         />
       </div>
     )
