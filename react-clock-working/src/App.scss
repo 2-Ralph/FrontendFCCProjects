@@ -1,0 +1,106 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap');
+
+*, *::before, *::after{
+    padding: 0;
+    margin: 0;
+    border: none;
+    box-sizing: border-box;
+}
+
+
+::selection{
+    background: hsl(0, 0, 0);
+    color: red;
+}
+
+#wrapper{
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(to right, #a7e6ff, #6dd6ff)
+}
+span{
+    pointer-events: none;
+}
+
+#timer-container{
+    border: 1px solid black;
+    height: 30vh;
+    border-radius: 8px;
+    width: 45%;
+    margin: auto;
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    box-shadow: 15px 15px 30px rgba(0,0,0,.1);
+
+
+    #increment-and-decrement-wrapper{
+        width: 27%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        align-items: center;
+        font-family: 'Poppins', sans-serif;
+        
+        .val-wrapper{
+            display: grid;
+            place-items: center;
+            width: 70px;
+            font-size: 35px;
+        }
+
+        .inc-dec-wrappers{
+            display: flex;
+            flex-direction: row;
+            display: flex;
+            align-items: center;
+        }
+
+        .change-val-btn{
+            height: 30px;
+            width: 30px;
+            border: 2px solid black;
+            cursor: pointer;
+            
+            i{
+                font-size: 15px;
+            }
+        }
+    }
+
+    #timer-field{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Poppins', sans-serif;
+        font-size: 38px;
+        flex: 2;
+    }
+
+
+
+    #timer-controls{
+        width: 27%;
+        font-size: 40px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+        align-items: center;
+    }
+
+    #start-stop-icon-container{
+        font-size: 50px;
+    }
+
+    i{
+        cursor: pointer;
+        font-size: 50px;
+        &:active{
+            color: limegreen;
+        }
+    }
+}
