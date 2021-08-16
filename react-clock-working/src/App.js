@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -8,7 +8,6 @@ import {
   faPlus,
   faMinus
 } from '@fortawesome/free-solid-svg-icons';
-import './App.css';
 
 
 /* eslint-disable */
@@ -26,19 +25,25 @@ let TimeDisplay = (props) => {
       </div>
       <div id="timer-controls">
         <div id="stop-start-icon-container" title="Pause">
-          {props.iconToggleState === 'fa fa-pause' &&
+          {props.iconToggleState === true &&
             <i
               id="stop-start-icon"
               aria-hidden="true"
-              onClick={props.handleCountDown}>
+              onClick={() => {
+                //props.handleCountDown();
+                props.handleIconChange();
+              }}>
               <FontAwesomeIcon icon={faPause} />
             </i>
           }
-          {props.iconToggleState === 'fa fa-play' &&
+          {props.iconToggleState === false &&
             <i
               id="stop-start-icon"
               aria-hidden="true"
-              onClick={props.handleCountDown}>
+              onClick={() => {
+                //props.handleCountDown();
+                props.handleIconChange();
+              }}>
               <FontAwesomeIcon icon={faPlay} />
             </i>
           }
@@ -111,6 +116,63 @@ const IncrementAndDecrement = (props) => {
   )
 }
 
+function App(){
+  const [sessionVal, setSessionVal] = useState(25);
+  const [breakVal, setBreakVal] = useState(5);
+  const [pauseIcon, setPauseIcon] = useState(false);
+  const [formattedTimer, setFormattedTimer] = useState('25 : 00');
+  
+  useEffect(() => {
+    setFormattedTimer(`${sessionVal} : 00`)
+  }, [sessionVal])
+
+  function handleIncrementAndDecrement(e) {
+    if (breakVal === 0 && /dec/i.test(e.target.value) || sessionVal === 0 && /dec/i.test(e.target.value)) {
+      return;
+    }
+
+    switch (e.target.value) {
+      case 'sesh-inc':
+        setSessionVal(prev => ++prev)
+        break;
+      case 'sesh-dec':
+        setSessionVal(prev => --prev)
+        break;
+      case 'break-inc':
+        setBreakVal(prev => ++prev)
+        break;
+      case 'break-dec':
+        setBreakVal(prev => --prev)
+        break;
+      default:
+        return;
+    };
+  };
+   
+
+  return(
+    <div id="wrapper">
+      <TimeDisplay
+      handleIconChange={() => {
+        pauseIcon == false ? setPauseIcon(true)
+        : setPauseIcon(false);
+      }}
+      iconToggleState={pauseIcon}
+      sessionVal={sessionVal}
+      breakVal={breakVal}
+      handleIncrementAndDecrement={handleIncrementAndDecrement}
+      formattedTimer={formattedTimer}
+      handleRestartClick={() => {
+        setBreakVal(5);
+        setSessionVal(25);
+      }}
+    />
+    </div>
+    
+  )
+
+}
+/*
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -129,6 +191,7 @@ class App extends React.Component {
     this.handlePause = this.handlePause.bind(this);
   };
 
+  
   handleIconChange() {
     if (this.state.iconToggleState == 'fa fa-pause') {
       this.setState({
@@ -241,6 +304,7 @@ class App extends React.Component {
     )
   }
 }
+*/
 export default App
 
 ReactDOM.render(
