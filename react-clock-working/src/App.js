@@ -30,7 +30,7 @@ let TimeDisplay = (props) => {
               id="stop-start-icon"
               aria-hidden="true"
               onClick={() => {
-                //props.handleCountDown();
+                props.handleCountDown();
                 props.handleIconChange();
               }}>
               <FontAwesomeIcon icon={faPause} />
@@ -41,7 +41,7 @@ let TimeDisplay = (props) => {
               id="stop-start-icon"
               aria-hidden="true"
               onClick={() => {
-                //props.handleCountDown();
+                props.handleCountDown();
                 props.handleIconChange();
               }}>
               <FontAwesomeIcon icon={faPlay} />
@@ -121,15 +121,59 @@ function App(){
   const [breakVal, setBreakVal] = useState(5);
   const [pauseIcon, setPauseIcon] = useState(false);
   const [formattedTimer, setFormattedTimer] = useState('25 : 00');
+  const [pauseState, setPauseState] = useState(true);
+  let timer;
   
   useEffect(() => {
     setFormattedTimer(`${sessionVal} : 00`)
-  }, [sessionVal])
+  }, [sessionVal]);
+
+  function handleCountDown(ms=sessionVal*60*1000){
+    let startTime, timer, objMethods = {};
+
+    objMethods.resume = function () {
+      startTime = new Date().getTime();
+      timer = setInterval(objMethods.step, 200);
+    };
+    objMethods.pause = function () {
+      ms = objMethods.step();
+      console.log(ms);
+      setFormattedTimer('lol')
+      clearInterval(timer);
+
+    };
+    objMethods.step = function () {
+      let now = Math.max(0, ms - (new Date().getTime() - startTime))
+      let m = Math.floor(now / 60000);
+      let s = Math.floor(now / 1000) % 60;
+      s = (s < 10 ? "0" : "") + s;
+      setFormattedTimer(`${m} : ${s}`)
+      return now;
+    };
+    objMethods.resume();
+    return objMethods;
+  }
+
+
+
+  function handlePause(){
+    timer = handleCountDown();
+    console.log('handlePause entered')
+    if(pauseState) {
+      console.log('pausestate true')
+      timer.resume();
+    }
+    else {
+      console.log('pausestate false');
+      timer.pause();
+    }
+    setPauseState(prev => !prev);
+  }
 
   function handleIncrementAndDecrement(e) {
     if (breakVal === 0 && /dec/i.test(e.target.value) || sessionVal === 0 && /dec/i.test(e.target.value)) {
       return;
-    }
+    };
 
     switch (e.target.value) {
       case 'sesh-inc':
@@ -166,6 +210,7 @@ function App(){
         setBreakVal(5);
         setSessionVal(25);
       }}
+      handleCountDown={handlePause}
     />
     </div>
     
