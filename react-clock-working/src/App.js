@@ -120,13 +120,13 @@ class App extends React.Component {
       iconToggleState: 'fa fa-pause',
       currentTimerState: 'session',
       formattedTimer: '25 : 00',
-      timerActive: false
+      timerActive: false,
+      timeLeftElapsed: this.state.sessionVal * 1000 * 60
     }
     this.handleIncrementAndDecrement = this.handleIncrementAndDecrement.bind(this);
     this.handleIconChange = this.handleIconChange.bind(this);
     this.handleCountDown = this.handleCountDown.bind(this);
     this.handleRestartClick = this.handleRestartClick.bind(this);
-    this.handlePause = this.handlePause.bind(this);
   };
 
   handleIconChange() {
@@ -151,45 +151,35 @@ class App extends React.Component {
     })
   }
 
-  handleCountDown(ms = this.state.sessionVal * 1000 * 60) {
-    let that = this;
-    let startTime, timer, objMethods = {};
-
-    objMethods.resume = function () {
-      startTime = new Date().getTime();
-      timer = setInterval(objMethods.step, 200);
-    };
-    objMethods.pause = function () {
-      ms = objMethods.step();
-      clearInterval(timer);
-    };
-    objMethods.step = function () {
-      let now = Math.max(0, ms - (new Date().getTime() - startTime))
-      let m = Math.floor(now / 60000);
-      let s = Math.floor(now / 1000) % 60;
-      s = (s < 10 ? "0" : "") + s;
-      that.setState({
+  handleCountDown() {
+    let interval;
+    const countDown = () => {
+      this.setState({
+        timeLeftElapsed: this.state.timeLeftElapsed - 1000
+      })
+      let m = Math.floor(this.state.timeLeftElapsed / 60000);
+      let s = Math.floor(this.state.timeLeftElapsed / 1000) % 60;
+      console.log("countdown func run VAL:", s);
+      this.setState({
         formattedTimer: `${m} : ${s}`
-      });
-      return now;
+      })
     };
-    objMethods.resume();
-    return objMethods;
-  };
-
-  handlePause() {
-    let timer = this.handleCountDown();
-    if (this.state.timerActive) {
-      timer.pause();
-      console.log('pause entered');
-    } else {
-      timer.resume();
-      console.log('resume entered');
+    const resume = () => {
+      console.log('hello');
+      interval = setInterval(countDown, 1000);
     }
+    const pause = () => {
+      console.log('bye');
+      clearInterval(interval);
+    };
+
+    this.state.timerActive ? pause()
+    : resume();
     this.setState({
       timerActive: !this.state.timerActive
     });
-  }
+  };
+
 
 
 
@@ -235,7 +225,7 @@ class App extends React.Component {
           handleIncrementAndDecrement={this.handleIncrementAndDecrement}
           handleRestartClick={this.handleRestartClick}
           formattedTimer={this.state.formattedTimer}
-          handleCountDown={this.handlePause}
+          handleCountDown={this.handleCountDown}
         />
       </div>
     )
