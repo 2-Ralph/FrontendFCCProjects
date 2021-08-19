@@ -9,7 +9,6 @@ import {
   faMinus
 } from '@fortawesome/free-solid-svg-icons';
 
-
 /* eslint-disable */
 
 let TimeDisplay = (props) => {
@@ -121,24 +120,57 @@ function App(){
   const [breakVal, setBreakVal] = useState(5);
   const [pauseIcon, setPauseIcon] = useState(false);
   const [formattedTimer, setFormattedTimer] = useState('25 : 00');
-  const [pauseState, setPauseState] = useState(true);
-  //const [ms, setMs] = useState(sessionVal*1000*60);
-  let ms = sessionVal*1000*60;
-  const interval = useRef(null)
+  const [pauseState, setPauseState] = useState(false);
+  const [ms, setMs] = useState(sessionVal*1000*60);
+  const mounted = useRef();
 
   useEffect(() => {
     setFormattedTimer(`${sessionVal} : 00`);
-    ms = sessionVal*1000*60;
-  }, [sessionVal])
+    setMs(sessionVal*1000*60);
+  }, [sessionVal]);
+
+  useEffect(() => {
+    if(!mounted.current) {
+      console.log("hello");
+      mounted.current = true;
+      return;
+    }
+    let interval = null;
+    if(pauseState){
+      interval = setInterval(() => {
+        setMs(prev => prev - 1000);
+      }, 1000);
+    } else if(!pauseState && ms !== 0){
+      console.log('pause entered!')
+      clearInterval(interval);
+    };
+    let m = Math.floor(ms / 60000);
+    let s = Math.floor(ms / 1000) % 60;
+    setFormattedTimer(`${m} : ${s == 0 ? '00' : s}`);
+    return () => {
+      clearInterval(interval);
+    }
+  }, [pauseState, ms]) 
+
+  function toggle(){
+    setPauseState(prev => !prev);
+  };
+
+  function resetTimer(){
+    setBreakVal(5);
+    setSessionVal(25);
+    setFormattedTimer(`${sessionVal} : 00`)
+  };
+
 
   function handleCountDown(){
-    console.log("btn onclick VAL:", Math.floor(ms / 1000) % 60)
 
+
+/*
     const countDown = () => {
-      ms -= 1000;
+      setMs(prev => prev - 1000);
       let m = Math.floor(ms / 60000);
       let s = Math.floor(ms / 1000) % 60;
-      console.log("countdown func run VAL:", s);
       setFormattedTimer(`${m} : ${s}`);
     };
     const initInterval = () => {
@@ -150,6 +182,7 @@ function App(){
 
     pauseState ? initInterval() : pause();
     setPauseState(prev => !prev);
+    */
   }
 
   function handleIncrementAndDecrement(e) {
@@ -188,11 +221,8 @@ function App(){
       breakVal={breakVal}
       handleIncrementAndDecrement={handleIncrementAndDecrement}
       formattedTimer={formattedTimer}
-      handleRestartClick={() => {
-        setBreakVal(5);
-        setSessionVal(25);
-      }}
-      handleCountDown={handleCountDown}
+      handleRestartClick={resetTimer}
+      handleCountDown={toggle}
     />
     </div>
   );
