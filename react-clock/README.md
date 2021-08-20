@@ -1,1 +1,0 @@
-# Timer created på me to learn react.
