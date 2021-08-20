@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -8,8 +8,6 @@ import {
   faPlus,
   faMinus
 } from '@fortawesome/free-solid-svg-icons';
-import './App.css';
-
 
 /* eslint-disable */
 
@@ -26,19 +24,25 @@ let TimeDisplay = (props) => {
       </div>
       <div id="timer-controls">
         <div id="stop-start-icon-container" title="Pause">
-          {props.iconToggleState === 'fa fa-pause' &&
+          {props.iconToggleState === true &&
             <i
               id="stop-start-icon"
               aria-hidden="true"
-              onClick={props.handleCountDown}>
+              onClick={() => {
+                props.handleCountDown();
+                props.handleIconChange();
+              }}>
               <FontAwesomeIcon icon={faPause} />
             </i>
           }
-          {props.iconToggleState === 'fa fa-play' &&
+          {props.iconToggleState === false &&
             <i
               id="stop-start-icon"
               aria-hidden="true"
-              onClick={props.handleCountDown}>
+              onClick={() => {
+                props.handleCountDown();
+                props.handleIconChange();
+              }}>
               <FontAwesomeIcon icon={faPlay} />
             </i>
           }
@@ -111,126 +115,101 @@ const IncrementAndDecrement = (props) => {
   )
 }
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      breakVal: 5,
-      sessionVal: 25,
-      iconToggleState: 'fa fa-pause',
-      currentTimerState: 'session',
-      formattedTimer: '25 : 00',
-      timerActive: false,
-      timeLeftElapsed: this.state.sessionVal * 1000 * 60
-    }
-    this.handleIncrementAndDecrement = this.handleIncrementAndDecrement.bind(this);
-    this.handleIconChange = this.handleIconChange.bind(this);
-    this.handleCountDown = this.handleCountDown.bind(this);
-    this.handleRestartClick = this.handleRestartClick.bind(this);
-  };
+function App(){
+  const [sessionVal, setSessionVal] = useState(25);
+  const [breakVal, setBreakVal] = useState(5);
+  const [pauseIcon, setPauseIcon] = useState(false);
+  const [formattedTimer, setFormattedTimer] = useState('25 : 00');
+  const [pauseState, setPauseState] = useState(false);
+  const [ms, setMs] = useState(sessionVal*1000*60);
+  const mounted = useRef();
 
-  handleIconChange() {
-    if (this.state.iconToggleState == 'fa fa-pause') {
-      this.setState({
-        iconToggleState: "fa fa-play"
-      })
-    } else {
-      this.setState({
-        iconToggleState: 'fa fa-pause'
-      })
-    };
-  };
+  useEffect(() => {
+    setFormattedTimer(`${sessionVal} : 00`);
+    setMs(sessionVal*1000*60);
+  }, [sessionVal]);
 
-  handleRestartClick() {
-    this.setState({
-      breakVal: 5,
-      sessionVal: 25,
-      iconToggleState: 'fa fa-pause',
-      currentTimerState: 'session',
-      formattedTimer: '25 : 00'
-    })
-  }
-
-  handleCountDown() {
-    let interval;
-    const countDown = () => {
-      this.setState({
-        timeLeftElapsed: this.state.timeLeftElapsed - 1000
-      })
-      let m = Math.floor(this.state.timeLeftElapsed / 60000);
-      let s = Math.floor(this.state.timeLeftElapsed / 1000) % 60;
-      console.log("countdown func run VAL:", s);
-      this.setState({
-        formattedTimer: `${m} : ${s}`
-      })
-    };
-    const resume = () => {
-      console.log('hello');
-      interval = setInterval(countDown, 1000);
-    }
-    const pause = () => {
-      console.log('bye');
-      clearInterval(interval);
-    };
-
-    this.state.timerActive ? pause()
-    : resume();
-    this.setState({
-      timerActive: !this.state.timerActive
-    });
-  };
-
-
-
-
-  handleIncrementAndDecrement(e) {
-    if (this.state.breakVal === 0 && /dec/i.test(e.target.value) || this.state.sessionVal === 0 && /dec/i.test(e.target.value)) {
+  useEffect(() => {
+    if(!mounted.current) {
+      console.log("hello");
+      mounted.current = true;
       return;
     }
+    let interval = null;
+    if(pauseState){
+      interval = setInterval(() => {
+        setMs(prev => prev - 1000);
+      }, 1000);
+    } else if(!pauseState && ms !== 0){
+      console.log('pause entered!')
+      clearInterval(interval);
+    };
+    let m = Math.floor(ms / 60000);
+    let s = Math.floor(ms / 1000) % 60;
+    setFormattedTimer(`${m} : ${s == 0 ? '00' : s}`);
+    return () => {
+      clearInterval(interval);
+    }
+  }, [pauseState, ms]) 
+
+  function toggle(){
+    setPauseState(prev => !prev);
+  };
+
+  function resetTimer(){
+    setBreakVal(5);
+    setSessionVal(25);
+    setMs(sessionVal*60*1000);
+    mounted.current = false;
+    setPauseIcon(false);
+    setPauseState(false);
+    setFormattedTimer(`${sessionVal} : 00`)
+  };
+
+
+  function handleIncrementAndDecrement(e) {
+    if (breakVal === 0 && /dec/i.test(e.target.value) || sessionVal === 0 && /dec/i.test(e.target.value)) {
+      return;
+    };
 
     switch (e.target.value) {
       case 'sesh-inc':
-        this.setState({
-          sessionVal: this.state.sessionVal += 1
-        });
+        setSessionVal(prev => ++prev)
         break;
       case 'sesh-dec':
-        this.setState({
-          sessionVal: this.state.sessionVal -= 1
-        });
+        setSessionVal(prev => --prev)
         break;
       case 'break-inc':
-        this.setState({
-          breakVal: this.state.breakVal += 1
-        });
+        setBreakVal(prev => ++prev)
         break;
       case 'break-dec':
-        this.setState({
-          breakVal: this.state.breakVal -= 1
-        });
+        setBreakVal(prev => --prev)
         break;
       default:
         return;
-    }
-  }
+    };
+  };
+   
 
-  render() {
-    return (
-      <div id="wrapper">
-        <TimeDisplay
-          handleIconChange={this.handleIconChange}
-          iconToggleState={this.state.iconToggleState}
-          breakVal={this.state.breakVal}
-          sessionVal={this.state.sessionVal}
-          handleIncrementAndDecrement={this.handleIncrementAndDecrement}
-          handleRestartClick={this.handleRestartClick}
-          formattedTimer={this.state.formattedTimer}
-          handleCountDown={this.handleCountDown}
-        />
-      </div>
-    )
-  }
-}
+  return(
+    <div id="wrapper">
+      <TimeDisplay
+      handleIconChange={() => {
+        pauseIcon == false ? setPauseIcon(true)
+        : setPauseIcon(false);
+      }}
+      iconToggleState={pauseIcon}
+      sessionVal={sessionVal}
+      breakVal={breakVal}
+      handleIncrementAndDecrement={handleIncrementAndDecrement}
+      formattedTimer={formattedTimer}
+      handleRestartClick={resetTimer}
+      handleCountDown={toggle}
+    />
+    </div>
+  );
+};
+
 export default App
 
 ReactDOM.render(
