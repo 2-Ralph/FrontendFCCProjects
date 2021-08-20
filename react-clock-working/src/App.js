@@ -159,31 +159,13 @@ function App(){
   function resetTimer(){
     setBreakVal(5);
     setSessionVal(25);
+    setMs(sessionVal*60*1000);
+    mounted.current = false;
+    setPauseIcon(false);
+    setPauseState(false);
     setFormattedTimer(`${sessionVal} : 00`)
   };
 
-
-  function handleCountDown(){
-
-
-/*
-    const countDown = () => {
-      setMs(prev => prev - 1000);
-      let m = Math.floor(ms / 60000);
-      let s = Math.floor(ms / 1000) % 60;
-      setFormattedTimer(`${m} : ${s}`);
-    };
-    const initInterval = () => {
-      interval.current = setInterval(countDown, 1000)
-    }
-    const pause = () => {
-      clearInterval(interval.current);
-    };
-
-    pauseState ? initInterval() : pause();
-    setPauseState(prev => !prev);
-    */
-  }
 
   function handleIncrementAndDecrement(e) {
     if (breakVal === 0 && /dec/i.test(e.target.value) || sessionVal === 0 && /dec/i.test(e.target.value)) {
